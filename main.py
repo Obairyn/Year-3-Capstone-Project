@@ -36,68 +36,19 @@ print("Точность на тренировочных данных:", history.
 
 class_names = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
 
-# predictions = model.predict(test_images)
-
-# correct_images = []
-# incorrect_images = []
-
-# for i in range(len(test_labels)):
-#     predicted_label = np.argmax(predictions[i])
-#     true_label = test_labels[i]
-#     if predicted_label == true_label:
-#         correct_images.append((test_images[i], predicted_label))
-#     else:
-#         incorrect_images.append((test_images[i], predicted_label, true_label))
-
-# plt.figure(figsize=(10, 10))
-# plt.suptitle("Правильно классифицированные изображения", fontsize=16)
-# for i in range(2):
-#     plt.subplot(2, 2, i + 1)
-#     plt.imshow(correct_images[i][0], cmap=plt.cm.binary)
-#     plt.title("Предсказано: {}".format(class_names[int(correct_images[i][1])])) 
-#     plt.axis('off')
-
-# plt.figure(figsize=(10, 10))
-# plt.suptitle("Неправильно классифицированные изображения", fontsize=16)
-# for i in range(2):
-#     plt.subplot(2, 2, i + 1)
-#     plt.imshow(incorrect_images[i][0], cmap=plt.cm.binary)
-#     plt.title("Предсказано: {}, На самом деле: {}".format(
-#         class_names[incorrect_images[i][1]], class_names[incorrect_images[i][2]]))
-#     plt.axis('off')
-
-# plt.show()
 predictions = model.predict(test_images)
 
-correct_images = []
-incorrect_images = []
+test_labels = np.array(test_labels)
 
-for i in range(len(test_labels)):
-    predicted_label = np.argmax(predictions[i])
-    true_label = test_labels[i]
-    if predicted_label == true_label:
-        correct_images.append((test_images[i], predicted_label))
-    else:
-        incorrect_images.append((test_images[i], predicted_label, true_label))
+correct_indices = np.nonzero(np.argmax(predictions, axis=1) == np.squeeze(test_labels))
 
-plt.figure(figsize=(10, 10))
-plt.suptitle("Правильно классифицированные изображения", fontsize=16)
-for i in range(2):
-    plt.subplot(2, 2, i + 1)
-    plt.imshow(correct_images[i][0], cmap=plt.cm.binary)
-    try:
-        predicted_class_name = class_names[correct_images[i][1]]
-    except IndexError:
-        predicted_class_name = "Unknown"
-    plt.title(f"Predicted: {predicted_class_name} (Correct)")
+correct_images = test_images[correct_indices]
+correct_labels = np.squeeze(test_labels[correct_indices])
+
+plt.figure(figsize=(10, 5))
+for i in range(5):
+    plt.subplot(1, 5, i + 1)
+    plt.imshow(correct_images[i])
+    plt.title(class_names[correct_labels[i]])
     plt.axis('off')
-
-plt.figure(figsize=(10, 10))
-plt.suptitle("Неправильно классифицированные изображения", fontsize=16)
-for i in range(2):
-    plt.subplot(2, 2, i + 1)
-    plt.imshow(incorrect_images[i][0], cmap=plt.cm.binary)
-    plt.title(f"Predicted: {class_names[incorrect_images[i][1]]}, Actual: {class_names[incorrect_images[i][2]]} (Incorrect)")
-    plt.axis('off')
-
 plt.show()
